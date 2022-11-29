@@ -294,7 +294,7 @@ impl<'a> Request<'a> {
             }
             // #[cfg(feature = "abi-7-28")]
             ll::Operation::CopyFileRange => {
-                self.reply::<ReplyEmpty>().error(libc::ENOENT);
+                self.reply::<ReplyEmpty>().error(libc::ENOSYS);
             }
 
             #[cfg(target_os = "macos")]
