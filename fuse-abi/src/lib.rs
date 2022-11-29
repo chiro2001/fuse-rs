@@ -282,6 +282,8 @@ pub enum fuse_opcode {
     FUSE_BATCH_FORGET = 42,
     #[cfg(feature = "abi-7-19")]
     FUSE_FALLOCATE = 43,
+    // #[cfg(feature = "abi-7-28")]
+    FUSE_COPY_FILE_RANGE = 47,
 
     #[cfg(target_os = "macos")]
     FUSE_SETVOLNAME = 61,
@@ -345,6 +347,8 @@ impl TryFrom<u32> for fuse_opcode {
             42 => Ok(fuse_opcode::FUSE_BATCH_FORGET),
             #[cfg(feature = "abi-7-19")]
             43 => Ok(fuse_opcode::FUSE_FALLOCATE),
+            // #[cfg(feature = "abi-7-28")]
+            47 => Ok(fuse_opcode::FUSE_COPY_FILE_RANGE),
 
             #[cfg(target_os = "macos")]
             61 => Ok(fuse_opcode::FUSE_SETVOLNAME),
@@ -927,4 +931,19 @@ pub struct fuse_notify_retrieve_in {                    // matches the size of f
     pub dummy2: u32,
     pub dummy3: u64,
     pub dummy4: u64,
+}
+
+/// I will not implement this,
+/// just tell fuse it fails
+// #[cfg(feature = "abi-7-28")]
+#[repr(C)]
+#[derive(Debug)]
+pub struct fuse_copy_file_range_in {
+    pub fh_in: u64,
+    pub off_in: u64,
+    pub nodeid_out: u64,
+    pub fh_out: u64,
+    pub off_out: u64,
+    pub len: u64,
+    pub flags: u64,
 }

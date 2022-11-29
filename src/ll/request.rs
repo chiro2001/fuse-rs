@@ -175,6 +175,9 @@ pub enum Operation<'a> {
     // FAllocate {
     //     arg: &'a fuse_fallocate_in,
     // },
+    // TODO: FUSE_COPY_FILE_RANGE since ABI 7.28
+    // #[cfg(feature = "abi-7-28")]
+    CopyFileRange,
 
     #[cfg(target_os = "macos")]
     SetVolName {
@@ -234,6 +237,9 @@ impl<'a> fmt::Display for Operation<'a> {
             Operation::Interrupt { arg } => write!(f, "INTERRUPT unique {}", arg.unique),
             Operation::BMap { arg } => write!(f, "BMAP blocksize {}, ids {}", arg.blocksize, arg.block),
             Operation::Destroy => write!(f, "DESTROY"),
+
+            // #[cfg(feature = "abi-7-28")]
+            Operation::CopyFileRange => write!(f, "COPYFILERANGE"),
 
             #[cfg(target_os = "macos")]
             Operation::SetVolName { name } => write!(f, "SETVOLNAME name {:?}", name),
@@ -322,6 +328,8 @@ impl<'a> Operation<'a> {
                 fuse_opcode::FUSE_INTERRUPT => Operation::Interrupt { arg: data.fetch()? },
                 fuse_opcode::FUSE_BMAP => Operation::BMap { arg: data.fetch()? },
                 fuse_opcode::FUSE_DESTROY => Operation::Destroy,
+
+                fuse_opcode::FUSE_COPY_FILE_RANGE => Operation::CopyFileRange,
 
                 #[cfg(target_os = "macos")]
                 fuse_opcode::FUSE_SETVOLNAME => Operation::SetVolName {

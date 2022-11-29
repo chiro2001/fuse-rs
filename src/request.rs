@@ -292,6 +292,10 @@ impl<'a> Request<'a> {
             ll::Operation::BMap { arg } => {
                 se.filesystem.bmap(self, self.request.nodeid(), arg.blocksize, arg.block, self.reply());
             }
+            // #[cfg(feature = "abi-7-28")]
+            ll::Operation::CopyFileRange => {
+                self.reply::<ReplyEmpty>().error(libc::ENOENT);
+            }
 
             #[cfg(target_os = "macos")]
             ll::Operation::SetVolName { name } => {
